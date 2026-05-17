@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+domain=$(get_setting_or_die domain)
+path_url=$(get_setting_or_die path)
+app_port=$(get_setting_or_die port)
+image=$(get_setting_or_die image)
+
+ynh_script_progression --message="Refreshing docker-compose config..."
+render_compose_file "$app_port" "$image"
+
+ynh_script_progression --message="Updating reverse proxy config..."
+ynh_add_nginx_config
+
+ynh_script_progression --message="Pulling latest image and restarting app..."
+compose_pull_up
+
+ynh_script_progression --message="Reloading nginx..."
+ynh_systemctl --service=nginx --action=reload
