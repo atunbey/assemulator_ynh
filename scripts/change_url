@@ -21,4 +21,4 @@ ynh_app_setting_set --app=$app --key=path --value=$new_path
 
 ynh_script_progression --message="Refreshing nginx reverse proxy..."
 ynh_add_nginx_config
-ynh_systemctl --service=nginx --action=reload
+ynh_systemd_action --service_name=nginx --action=reload
