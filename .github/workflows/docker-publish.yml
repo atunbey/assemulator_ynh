@@ -29,3 +29,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/assemulator_ynh:latest
+          build-args: |
+            APP_REPO=https://github.com/atunbey/assemulator
+            APP_REF=master

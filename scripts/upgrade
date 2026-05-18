@@ -16,6 +16,11 @@ render_compose_file "$port" "$image"
 ynh_script_progression --message="Updating reverse proxy config..."
 ynh_add_nginx_config
 
+ynh_script_progression --message="Repairing SSO permissions (best-effort migration)..."
+yunohost user permission update ${app}.main --add visitors || true
+yunohost user permission update ${app}.main --url / || true
+yunohost app ssowatconf || true
+
 ynh_script_progression --message="Pulling latest image and restarting app..."
 compose_pull_up
 
