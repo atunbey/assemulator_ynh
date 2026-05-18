@@ -20,9 +20,10 @@ ARG BASE_PATH=/assemulator/
 COPY --from=builder /out/wwwroot /usr/share/nginx/html
 COPY conf/nginx-container.conf /etc/nginx/conf.d/default.conf
 
-# Rewrite <base href> to match the subpath the app will be served from.
-# This avoids relying on nginx sub_filter at the reverse-proxy layer.
-RUN sed -i "s|<base href=\"/\" />|<base href=\"${BASE_PATH}\" />|" \
+# Rewrite <base href> to the configured subpath.
+# The regex [^"]* matches whatever value the source already has (/ or /assemulator/ etc.)
+# so the image always uses the BASE_PATH supplied at build time.
+RUN sed -i "s|<base href=\"[^\"]*\" />|<base href=\"${BASE_PATH}\" />|" \
         /usr/share/nginx/html/index.html
 
 RUN mkdir -p \
