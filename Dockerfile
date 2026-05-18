@@ -15,7 +15,15 @@ RUN dotnet publish -c Release -o /out
 # Stage 2: serve with nginx
 FROM nginx:alpine
 
+ARG BASE_PATH=/assemulator/
+
 COPY --from=builder /out/wwwroot /usr/share/nginx/html
+COPY conf/nginx-container.conf /etc/nginx/conf.d/default.conf
+
+# Rewrite <base href> to match the subpath the app will be served from.
+# This avoids relying on nginx sub_filter at the reverse-proxy layer.
+RUN sed -i "s|<base href=\"/\" />|<base href=\"${BASE_PATH}\" />|" \
+        /usr/share/nginx/html/index.html
 
 RUN mkdir -p \
     /usr/share/nginx/html/data \

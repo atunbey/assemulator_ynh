@@ -32,3 +32,4 @@ jobs:
           build-args: |
             APP_REPO=https://github.com/atunbey/assemulator
             APP_REF=master
+            BASE_PATH=/assemulator/
