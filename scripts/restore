@@ -7,7 +7,7 @@ source /usr/share/yunohost/helpers
 
 domain=$(get_setting_or_die domain)
 path_url=$(get_setting_or_die path)
-app_port=$(get_setting_or_die port)
+port=$(get_setting_or_die port)
 image=$(get_setting_or_die image)
 
 ynh_script_progression --message="Ensuring Docker and Compose are available..."
@@ -22,7 +22,7 @@ mkdir -p "$final_path"
 ynh_restore_file --origin_path="$final_path"
 
 ynh_script_progression --message="Refreshing compose config from settings..."
-render_compose_file "$app_port" "$image"
+render_compose_file "$port" "$image"
 
 ynh_script_progression --message="Restoring reverse proxy configuration..."
 ynh_add_nginx_config
