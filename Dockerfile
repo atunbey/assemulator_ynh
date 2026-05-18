@@ -1,5 +1,5 @@
 # Stage 1: build the Blazor WASM app
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS builder
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS builder
 
 ARG APP_REPO=https://github.com/atunbey/assemulator
 ARG APP_REF=master
