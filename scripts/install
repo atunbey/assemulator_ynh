@@ -23,7 +23,7 @@ install_container_dependencies
 
 ynh_script_progression --message="Preparing app files..."
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-ynh_safe_rm "$final_path"
+ynh_secure_remove "$final_path"
 mkdir -p "$final_path" "$final_path/data" "$final_path/roms" "$final_path/images" "$final_path/bios"
 
 render_compose_file "$app_port" "$image"

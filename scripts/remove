@@ -12,7 +12,7 @@ ynh_script_progression --message="Stopping Assemulator container..."
 compose_down_if_exists
 
 ynh_script_progression --message="Removing app files..."
-ynh_safe_rm "$final_path"
+ynh_secure_remove "$final_path"
 
 ynh_script_progression --message="Reloading nginx..."
 ynh_systemctl --service=nginx --action=reload
