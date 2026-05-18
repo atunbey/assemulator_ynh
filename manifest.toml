@@ -11,8 +11,8 @@ maintainers = ["atunbey"]
 
 [upstream]
 license = "MIT"
-website = "https://github.com/atunbey/Assemulator"
-code = "https://github.com/atunbey/Assemulator"
+website = "https://github.com/atunbey/assemulator_ynh"
+code = "https://github.com/atunbey/assemulator_ynh"
 fund = ""
 
 [upstream.demo]
