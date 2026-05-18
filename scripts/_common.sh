@@ -4,12 +4,21 @@ app=$YNH_APP_INSTANCE_NAME
 final_path="/var/www/$app"
 compose_file="$final_path/docker-compose.yml"
 
+_apt_has_installable_candidate() {
+	# apt-cache show can succeed even when a package has no installable candidate
+	# (e.g. listed in cache but repo is missing/broken). apt-cache policy is stricter.
+	local pkg="$1"
+	local candidate
+	candidate=$(LANG=C apt-cache policy "$pkg" 2>/dev/null | awk '/Candidate:/{print $2}')
+	[ -n "$candidate" ] && [ "$candidate" != "(none)" ]
+}
+
 install_container_dependencies() {
 	local compose_dep=""
 
-	if apt-cache show docker-compose-plugin >/dev/null 2>&1; then
+	if _apt_has_installable_candidate docker-compose-plugin; then
 		compose_dep="docker-compose-plugin"
-	elif apt-cache show docker-compose >/dev/null 2>&1; then
+	elif _apt_has_installable_candidate docker-compose; then
 		compose_dep="docker-compose"
 	fi
 
