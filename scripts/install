@@ -19,7 +19,7 @@ ynh_app_setting_set --app=$app --key=port --value=$app_port
 ynh_app_setting_set --app=$app --key=image --value=$image
 
 ynh_script_progression --message="Ensuring Docker and Compose are available..."
-ynh_exec_warn_less ynh_install_app_dependencies docker.io docker-compose-plugin
+install_container_dependencies
 
 ynh_script_progression --message="Preparing app files..."
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path

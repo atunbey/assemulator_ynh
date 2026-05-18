@@ -4,6 +4,36 @@ app=$YNH_APP_INSTANCE_NAME
 final_path="/var/www/$app"
 compose_file="$final_path/docker-compose.yml"
 
+install_container_dependencies() {
+	local compose_dep=""
+
+	if apt-cache show docker-compose-plugin >/dev/null 2>&1; then
+		compose_dep="docker-compose-plugin"
+	elif apt-cache show docker-compose >/dev/null 2>&1; then
+		compose_dep="docker-compose"
+	fi
+
+	if [ -z "$compose_dep" ]; then
+		ynh_die --message="Neither docker-compose-plugin nor docker-compose is available from apt repositories"
+	fi
+
+	ynh_exec_warn_less ynh_install_app_dependencies docker.io "$compose_dep"
+}
+
+compose_upstream_available() {
+	if command -v docker-compose >/dev/null 2>&1; then
+		echo "docker-compose"
+		return 0
+	fi
+
+	if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+		echo "docker compose"
+		return 0
+	fi
+
+	ynh_die --message="Docker Compose command is unavailable. Expected either 'docker compose' or 'docker-compose'."
+}
+
 get_setting_or_die() {
 	local key=$1
 	local value
@@ -25,12 +55,24 @@ render_compose_file() {
 }
 
 compose_pull_up() {
-	ynh_exec_warn_less docker compose -f "$compose_file" pull
-	ynh_exec_warn_less docker compose -f "$compose_file" up -d
+	local compose_cmd
+	compose_cmd=$(compose_upstream_available)
+
+	if [ "$compose_cmd" = "docker-compose" ]; then
+		ynh_exec_warn_less docker-compose -f "$compose_file" pull
+		ynh_exec_warn_less docker-compose -f "$compose_file" up -d
+	else
+		ynh_exec_warn_less docker compose -f "$compose_file" pull
+		ynh_exec_warn_less docker compose -f "$compose_file" up -d
+	fi
 }
 
 compose_down_if_exists() {
 	if [ -f "$compose_file" ]; then
-		ynh_exec_warn_less docker compose -f "$compose_file" down || true
+		if command -v docker-compose >/dev/null 2>&1; then
+			ynh_exec_warn_less docker-compose -f "$compose_file" down || true
+		elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+			ynh_exec_warn_less docker compose -f "$compose_file" down || true
+		fi
 	fi
 }
